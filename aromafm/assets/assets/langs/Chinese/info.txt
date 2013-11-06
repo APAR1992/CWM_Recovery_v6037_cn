@@ -1,0 +1,2 @@
+﻿欢迎使用 AROMA 文件管理器(Change another Font to show Chinese correctly)
+by <b>mrga0</b>
