@@ -438,7 +438,7 @@ void show_nandroid_delete_menu(const char* path)
 
     if (confirm_selection("确认删除?", "确认 - 删除")) {
         // nandroid_restore(file, 1, 1, 1, 1, 1, 0);
-        ui_print("正在删除%s\n", basename(file));
+        ui_print("已删除%s\n", basename(file));
         sprintf(tmp, "rm -rf %s", file);
         __system(tmp);
     }
@@ -611,7 +611,7 @@ int confirm_selection(const char* title, const char* confirm)
     if (0 == stat("/sdcard/clockworkmod/.no_confirm", &info))
         return 1;
 
-    char* confirm_headers[]  = {  title, "  此操作不能撤销.", "", NULL };
+    char* confirm_headers[]  = {  title, "注意：此操作不能撤销.", "", NULL };
     int one_confirm = 0 == stat("/sdcard/clockworkmod/.one_confirm", &info);
 #ifdef BOARD_TOUCH_RECOVERY
     one_confirm = 1;
@@ -978,84 +978,7 @@ void show_partition_menu()
     free(format_menu);
 }
 
-
-void show_nandroid_advanced_backup_menu(const char *path) {
-	if (ensure_path_mounted(path) != 0) {
-		LOGE ("Can't mount %s\n", path);
-		return;
-	}
-
-	static char* advancedheaders[] = { "高级备份",
-        								"",
-        								"选择要备份的分区",
-        								"",
-										NULL
-    };
-    
-    int backup_list [7];
-    char* list[7];
-    
-    backup_list[0] = 1;
-    backup_list[1] = 1;
-    backup_list[2] = 1;
-    backup_list[3] = 1;
-    backup_list[4] = 1;
-    backup_list[5] = NULL;
-    
-    list[5] = "开始备份";
-    list[6] = NULL;
-    
-    int cont = 1;
-    for (;cont;) {
-		if (backup_list[0] == 1)
-			list[0] = "备份 boot";
-		else
-			list[0] = "取消备份 boot";
-			
-		if (backup_list[1] == 1)
-	    	list[1] = "备份 recovery";
-	    else
-	    	list[1] = "取消备份 recovery";
-	    	
-	    if (backup_list[2] == 1)
-    		list[2] = "备份 system";
-	    else
-	    	list[2] = "取消备份 system";
-
-	    if (backup_list[3] == 1)
-	    	list[3] = "备份 data";
-	    else
-	    	list[3] = "取消备份 data";
-
-	    if (backup_list[4] == 1)
-	    	list[4] = "备份 cache";
-	    else
-	    	list[4] = "取消备份 cache";
-	    	
-	    int chosen_item = get_menu_selection (advancedheaders, list, 0, 0);
-	    switch (chosen_item) {
-			case GO_BACK: return;
-			case 0: backup_list[0] = !backup_list[0];
-				break;
-			case 1: backup_list[1] = !backup_list[1];
-				break;
-			case 2: backup_list[2] = !backup_list[2];
-				break;
-			case 3: backup_list[3] = !backup_list[3];
-				break;
-			case 4: backup_list[4] = !backup_list[4];
-				break;	
-		   
-			case 5: cont = 0;
-				break;
-		}
-	}
-	
-	nandroid_generate_timestamp_path(path);
-	return nandroid_advanced_backup(path, backup_list[0], backup_list[1], backup_list[2], backup_list[3], backup_list[4], backup_list[5]);
-}
-
-void show_nandroid_advanced_restore_menu(const char* path) 
+void show_nandroid_advanced_restore_menu(const char* path)
 {
     if (ensure_path_mounted(path) != 0) {
         LOGE ("Can't mount sdcard\n");
@@ -1145,27 +1068,18 @@ static void choose_default_backup_format() {
                                 NULL
     };
 
-    int fmt = nandroid_get_default_backup_format();
     char **list;
     char* list_tar_default[] = { "tar (默认)",
         "dup",
-        "tgz",
         NULL
     };
     char* list_dup_default[] = { "tar",
         "dup (默认)",
-        "tgz",
         NULL
     };
-    char* list_tgz_default[] = { "tar",
-        "dup",
-        "tgz (默认)",
-        NULL
-    };
-    if (fmt == NANDROID_BACKUP_FORMAT_DUP) {
+
+    if (nandroid_get_default_backup_format() == NANDROID_BACKUP_FORMAT_DUP) {
         list = list_dup_default;
-    } else if (fmt == NANDROID_BACKUP_FORMAT_TGZ) {
-        list = list_tgz_default;
     } else {
         list = list_tar_default;
     }
@@ -1179,10 +1093,6 @@ static void choose_default_backup_format() {
         case 1:
             write_string_to_file(NANDROID_BACKUP_FORMAT_FILE, "dup");
             ui_print("默认备份格式设置为dedupe.\n");
-            break;
-        case 2:
-            write_string_to_file(NANDROID_BACKUP_FORMAT_FILE, "tgz");
-            ui_print("默认备份格式设置为 tgz.\n");
             break;
     }
 }
@@ -1198,7 +1108,6 @@ void show_nandroid_menu()
                             "还原",
                             "删除",
                             "高级还原",
-                            "高级备份",
                             "释放不使用的备份数据",
                             "选择默认备份格式",
                             NULL,
@@ -1216,19 +1125,17 @@ void show_nandroid_menu()
         list[6] = "备份至内置sd卡";
         list[7] = "从内置sd卡上还原";
         list[8] = "从内置sd卡上高级还原";
-        list[9] = "高级备份到内置sd卡上";
-        list[10] = "从内置sd卡上删除";
+        list[9] = "从内置sd卡上删除";
     }
     else if (volume_for_path("/external_sd") != NULL) {
         other_sd = "/external_sd";
         list[6] = "备份至外置sd卡";
         list[7] = "从外置sd卡上还原";
         list[8] = "从外置sd卡上高级还原";
-        list[9] = "高级备份到外置sd卡上";
-        list[10] = "从外置sd卡上删除";
+        list[9] = "从外置sd卡上删除";
     }
 #ifdef RECOVERY_EXTEND_NANDROID_MENU
-    extend_nandroid_menu(list, 11, sizeof(list) / sizeof(char*));
+    extend_nandroid_menu(list, 10, sizeof(list) / sizeof(char*));
 #endif
 
     for (;;) {
@@ -1269,21 +1176,18 @@ void show_nandroid_menu()
                 write_recovery_version();
                 break;
             case 4:
-                show_nandroid_advanced_backup_menu("/sdcard");
-                write_recovery_version();
-                break;
-            case 5:
                 run_dedupe_gc(other_sd);
                 break;
-            case 6:
+            case 5:
                 choose_default_backup_format();
                 break;
-            case 7:
+            case 6:
                 {
                     char backup_path[PATH_MAX];
                     time_t t = time(NULL);
                     struct tm *timeptr = localtime(&t);
-                    if (timeptr == NULL) {
+                    if (timeptr == NULL)
+                    {
                         struct timeval tp;
                         gettimeofday(&tp, NULL);
                         if (other_sd != NULL) {
@@ -1309,29 +1213,24 @@ void show_nandroid_menu()
                     nandroid_backup(backup_path);
                 }
                 break;
-            case 8:
+            case 7:
                 if (other_sd != NULL) {
                     show_nandroid_restore_menu(other_sd);
                 }
                 break;
-            case 9:
-                if (other_sd != NULL) {
-                    show_nandroid_advanced_backup_menu(other_sd);
-                }
-                break;
-            case 10:
+            case 8:
                 if (other_sd != NULL) {
                     show_nandroid_advanced_restore_menu(other_sd);
                 }
                 break;
-            case 11:
+            case 9:
                 if (other_sd != NULL) {
                     show_nandroid_delete_menu(other_sd);
                 }
                 break;
             default:
 #ifdef RECOVERY_EXTEND_NANDROID_MENU
-                handle_nandroid_menu(12, chosen_item);
+                handle_nandroid_menu(10, chosen_item);
 #endif
                 break;
         }
@@ -1374,7 +1273,7 @@ static void partition_sdcard(const char* volume) {
 
     static const char* ext_headers[] = { "EXT分区大小", "", NULL };
     static const char* swap_headers[] = { "Swap分区大小", "", NULL };
-    static const char* fstype_headers[] = {"Partition Type", "", NULL };
+    static const char* fstype_headers[] = {"分区类型", "", NULL };
 
     int ext_size = get_menu_selection(ext_headers, ext_sizes, 0, 0);
     if (ext_size == GO_BACK)
@@ -1564,10 +1463,10 @@ void create_fstab()
     write_fstab_root("/datadata", file);
     write_fstab_root("/emmc", file);
     write_fstab_root("/system", file);
+    write_fstab_root("/preload", file);
     write_fstab_root("/sdcard", file);
     write_fstab_root("/sd-ext", file);
     write_fstab_root("/external_sd", file);
-	write_fstab_root("/preload", file);
     fclose(file);
     LOGI("Completed outputting fstab.\n");
 }
@@ -1648,7 +1547,7 @@ void handle_failure(int ret)
         return;
     mkdir("/sdcard/clockworkmod", S_IRWXU | S_IRWXG | S_IRWXO);
     __system("cp /tmp/recovery.log /sdcard/clockworkmod/recovery.log");
-    ui_print("日志文件已经被复制到/sdcard/clockworkmod/recovery.log.请打开ROM管理器报告问题.\n");
+    ui_print("日志文件已经复制到/sdcard/clockworkmod/recovery.log.请打开ROM管理器报告问题.\n");
 }
 
 int is_path_mounted(const char* path) {

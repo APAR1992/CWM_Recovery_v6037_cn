@@ -48,7 +48,6 @@
 #include "flashutils/flashutils.h"
 #include "dedupe/dedupe.h"
 
-//#include "recovery_cmds.h"
 
 struct selabel_handle *sehandle = NULL;
 
@@ -307,22 +306,7 @@ copy_log_file(const char* destination, int append) {
     }
 }
 
-// Rename last_log -> last_log.1 -> last_log.2 -> ... -> last_log.$max
-// Overwrites any existing last_log.$max.
-/*static void
-rotate_last_logs(int max) {
-    char oldfn[256];
-    char newfn[256];
 
-    int i;
-    for (i = max-1; i >= 0; --i) {
-        snprintf(oldfn, sizeof(oldfn), (i==0) ? LAST_LOG_FILE : (LAST_LOG_FILE ".%d"), i);
-        snprintf(newfn, sizeof(newfn), LAST_LOG_FILE ".%d", i+1);
-        // ignore errors
-        rename(oldfn, newfn);
-    }
-}
-*/
 // clear the recovery command and prepare to boot a (hopefully working) system,
 // copy our log file to cache as well (for the system to read), and
 // record any intent we were asked to communicate back to the system.
@@ -468,7 +452,8 @@ copy_sideloaded_package(const char* original_path) {
 static const char**
 prepend_title(const char** headers) {
     const char* title[] = { EXPAND(RECOVERY_VERSION),
-                       "音量键上下选择，电源键确认",
+//                      "--------------------------",
+                       "音量键上/下选择，电源键确认",
                       "",
                       NULL };
 
@@ -549,7 +534,7 @@ get_menu_selection(const char** headers, char** items, int menu_only,
         } else if (!menu_only) {
             chosen_item = action;
         }
-        
+
         if (abs(selected - old_selected) > 1) {
             wrap_count++;
             if (wrap_count == 5) {
@@ -562,7 +547,7 @@ get_menu_selection(const char** headers, char** items, int menu_only,
                     ui_set_rainbow_mode(1);
                     ui_print("彩虹模式已开启!\n");
                 }
-            }
+            } 
         }
     }
 
@@ -892,6 +877,8 @@ main(int argc, char **argv) {
             return bu_main(argc, argv);
         if (strstr(argv[0], "reboot"))
             return reboot_main(argc, argv);
+//        if (strstr(argv[0], "pigz") != NULL)
+//            return pigz_main(argc, argv);
 #ifdef BOARD_RECOVERY_HANDLES_MOUNT
         if (strstr(argv[0], "mount") && argc == 2 && !strstr(argv[0], "umount"))
         {

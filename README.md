@@ -20,13 +20,11 @@
 
 5、在Device里添加```BOARD_USE_CUSTOM_RECOVERY_FONT := \"chinese/font_15x24.h\"```来改变默认字体大小
 
-6、在Device里添加```BOARD_USE_CUSTOM_EVENTS := true```打开按键振动
+6、在Device里添加```BOARD_USE_FB2PNG := true```可定义使用fb2png在recovery下截屏
 
-7、在Device里添加```BOARD_USE_FB2PNG := true```可定义使用fb2png在recovery下截屏
+7、在Device里添加```BOARD_USE_AROMA_FILE_MANAGER := true```可编译Aroma文件夹管理器
 
-8、在Device里添加```BOARD_USE_AROMA_FILE_MANAGER := true```可编译Aroma文件夹管理器
-
-9、移植了6044的彩虹界面及滑动触摸，需要在Device里添加```BOARD_RECOVERY_SWIPE := true```调用
+8、移植了6044的彩虹界面及滑动触摸，需要在Device里添加```BOARD_RECOVERY_SWIPE := true```调用
 
 PS:加入的备份格式tgz貌似还有点问题，修改中～～
    高级备份还需要修改，目前用不了～～

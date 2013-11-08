@@ -52,7 +52,6 @@ static int gShowBackButton = 0;
 
 #define CHAR_WIDTH BOARD_RECOVERY_CHAR_WIDTH
 #define CHAR_HEIGHT (BOARD_RECOVERY_CHAR_HEIGHT+8)
-//#define EXT_HEIGHT CHAR_HEIGHT
 
 #define UI_WAIT_KEY_TIMEOUT_SEC    3600
 #define UI_KEY_REPEAT_INTERVAL 80
@@ -549,7 +548,7 @@ void ui_init(void)
 {
     ui_has_initialized = 1;
     gr_init();
-//	gr_init();//for black_screen bug
+//	gr_init();//for some device black_screen bug
     ev_init(input_callback, NULL);
 #ifdef BOARD_TOUCH_RECOVERY
     touch_init();
@@ -1165,7 +1164,6 @@ int get_batt_stats(void) {
         level = 0;
         nextCheck = currentTime.tv_sec + 30;
     }
-
     return level;
 }
 
