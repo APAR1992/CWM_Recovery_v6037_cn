@@ -10,7 +10,7 @@
 
 2、加入了时间和电量显示
 
-3、针对MTK进行了部分修改(参考了```[Xs](http://weibo.com/acexs)```的代码，mtk备份部分的判断代码参考了```[老杨](http://weibo.com/210124187)```的修改)
+3、针对MTK进行了部分修改(参考了[Xs](http://weibo.com/acexs)的代码，mtk备份部分的判断代码参考了[老杨](http://weibo.com/210124187)的修改)
 
 	a、支持MTK平台备份（可备份boot及recovery分区）
 
