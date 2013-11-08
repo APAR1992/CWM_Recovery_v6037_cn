@@ -10,7 +10,7 @@
 
 2、加入了时间和电量显示
 
-3、针对MTK进行了部分修改(参考了```Xs```的代码，mtk备份部分的判断代码参考了```老杨```的修改)
+3、针对MTK进行了部分修改(参考了```[Xs](http://weibo.com/acexs)```的代码，mtk备份部分的判断代码参考了```[老杨](http://weibo.com/210124187)```的修改)
 
 	a、支持MTK平台备份（可备份boot及recovery分区）
 
@@ -24,7 +24,4 @@
 
 7、在Device里添加```BOARD_USE_AROMA_FILE_MANAGER := true```可编译Aroma文件夹管理器
 
-8、移植了6044的彩虹界面及滑动触摸，需要在Device里添加```BOARD_RECOVERY_SWIPE := true```调用
-
-PS:加入的备份格式tgz貌似还有点问题，修改中～～
-   高级备份还需要修改，目前用不了～～
+8、移植了6044的彩虹界面及滑动触摸，需要在Device里添加```BOARD_RECOVERY_SWIPE := true```调用滑动触摸（由于机型各异，触摸不一定能用）
